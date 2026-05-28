@@ -12,7 +12,7 @@ internal class TrayIconContextMenu : ContextMenuBase
     private readonly NativeMenu _menu;
     private readonly int _menuReserveCount;
     private NativeMenuItemSeparator? _dynamicSeparator;
-    private int _dynamicItemStart;
+    private readonly int _dynamicItemStart;
 
     public TrayIconContextMenu()
     {

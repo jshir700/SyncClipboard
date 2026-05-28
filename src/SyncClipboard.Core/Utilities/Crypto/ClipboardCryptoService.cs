@@ -6,7 +6,7 @@ using CryptoConfig = SyncClipboard.Core.Models.UserConfigs.CryptoConfig;
 
 namespace SyncClipboard.Core.Utilities.Crypto;
 
-public class ClipboardCryptoService : IClipboardCryptoService, IDisposable
+public class ClipboardCryptoService(ConfigManager configManager) : IClipboardCryptoService, IDisposable
 {
     private const int PBKDF2_ITERATIONS = 600_000;
     private const int KEY_SIZE = 32;
@@ -15,7 +15,7 @@ public class ClipboardCryptoService : IClipboardCryptoService, IDisposable
     private const string SALT_PREFIX = "SyncClipboardE2EE:v1:salt:";
     private const string VERIFY_PREFIX = "SyncClipboardE2EE:v1:verify:";
 
-    private readonly ConfigManager _configManager;
+    private readonly ConfigManager _configManager = configManager;
     private byte[]? _derivedKey;
 
     public bool IsEnabled
@@ -25,11 +25,6 @@ public class ClipboardCryptoService : IClipboardCryptoService, IDisposable
             var config = _configManager.GetConfig<CryptoConfig>();
             return config.EncryptionEnabled && !string.IsNullOrEmpty(config.EncryptedPassword);
         }
-    }
-
-    public ClipboardCryptoService(ConfigManager configManager)
-    {
-        _configManager = configManager;
     }
 
     public void LoadOrDeriveKey(string password)
@@ -248,5 +243,6 @@ public class ClipboardCryptoService : IClipboardCryptoService, IDisposable
             CryptographicOperations.ZeroMemory(_derivedKey);
             _derivedKey = null;
         }
+        GC.SuppressFinalize(this);
     }
 }

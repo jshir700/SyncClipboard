@@ -130,7 +130,7 @@ namespace SyncClipboard.WinUI3.Views
         }
 
         private MenuFlyoutSeparator? _dynamicSeparator;
-        private int _dynamicItemStart = 1;
+        private readonly int _dynamicItemStart = 1;
 
         public override void SetDynamicSection(Core.Interfaces.MenuItem[] items)
         {
