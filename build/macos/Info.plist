@@ -5,7 +5,7 @@
 	<key>CFBundleIconFile</key>
 	<string>icon.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>xyz.jericx.desktop.syncclipboard</string>
+	<string>com.jshir700.desktop.syncclipboard</string>
 	<key>CFBundleName</key>
 	<string>SyncClipboard</string>
 	<key>LSMinimumSystemVersion</key>

@@ -556,7 +556,7 @@ namespace SyncClipboard.Core.I18n {
         }
         
         /// <summary>
-        ///   查找类似 https://github.com/Jeric-X/SyncClipboard/blob/master/docs/README_EN.md#server-configuration 的本地化字符串。
+        ///   查找类似 https://github.com/jshir700/SyncClipboard/blob/master/docs/README_EN.md#server-configuration 的本地化字符串。
         /// </summary>
         public static string CustomConfigFileLink {
             get {

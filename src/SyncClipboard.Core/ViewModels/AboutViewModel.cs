@@ -62,7 +62,7 @@ public partial class AboutViewModel : ObservableObject
 
     public List<OpenSourceSoftware> Dependencies { get; } =
     [
-        new OpenSourceSoftware("NativeNotification", "https://github.com/Jeric-X/NativeNotification", "NativeNotification/LICENSE.txt"),
+        new OpenSourceSoftware("NativeNotification", "https://github.com/jshir700/NativeNotification", "NativeNotification/LICENSE.txt"),
         new OpenSourceSoftware("Magick.NET", "https://github.com/dlemstra/Magick.NET", "Magick.NET/License.txt"),
         new OpenSourceSoftware(".NET Community Toolkit", "https://github.com/CommunityToolkit/dotnet", "NETCommunityToolkit/License.md"),
         new OpenSourceSoftware("H.NotifyIcon", "https://github.com/HavenDV/H.NotifyIcon", "H.NotifyIcon/LICENSE.md"),

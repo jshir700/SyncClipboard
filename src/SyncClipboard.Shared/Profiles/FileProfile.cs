@@ -54,6 +54,7 @@ public class FileProfile : Profile
     public FileProfile(ProfileDto dto) : this(null, dto.DataName, dto.Hash)
     {
         Size = dto.Size;
+        Encrypted = dto.Encrypted;
     }
 
     protected override async Task ComputeHash(CancellationToken token)

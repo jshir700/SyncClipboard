@@ -119,7 +119,7 @@ internal partial class SharpHookHotkeyRegistry : INativeHotkeyRegistry, IDisposa
             _newPermissionApplied = true;
             try
             {
-                Process.Start("tccutil", "reset Accessibility xyz.jericx.desktop.syncclipboard").WaitForExit(1000);
+                Process.Start("tccutil", "reset Accessibility com.jshir700.desktop.syncclipboard").WaitForExit(1000);
             }
             catch (Exception ex)
             {

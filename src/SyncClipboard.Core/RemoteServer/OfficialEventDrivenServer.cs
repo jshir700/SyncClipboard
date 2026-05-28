@@ -17,6 +17,7 @@ public sealed class OfficialEventDrivenServer : IRemoteClipboardServer, IOfficia
     private readonly ITrayIcon _trayIcon;
     private readonly ILogger _logger;
     private readonly HistoryTransferQueue _historyTransferQueue;
+    private readonly IClipboardCryptoService? _crypto;
     private readonly SingletonTask _singletonQueryTask = new SingletonTask();
     private bool _disconnected = true;
 
@@ -29,6 +30,7 @@ public sealed class OfficialEventDrivenServer : IRemoteClipboardServer, IOfficia
         _logger = sp.GetRequiredService<ILogger>();
         _trayIcon = sp.GetRequiredService<ITrayIcon>();
         _historyTransferQueue = sp.GetRequiredService<HistoryTransferQueue>();
+        _crypto = sp.GetService<IClipboardCryptoService>();
         _testAliveHelper = new TestAliveHelper(TestConnectionAsync);
         _testAliveHelper.TestSuccessed += OnTestAliveSuccessed;
         _serverHelper.ExceptionOccurred += OnServerHelperExceptionOccurred;
@@ -118,6 +120,14 @@ public sealed class OfficialEventDrivenServer : IRemoteClipboardServer, IOfficia
 
     private void OnProfileDtoChanged(ProfileDto newProfileDto)
     {
+        if (newProfileDto.Encrypted && _crypto is not null && _crypto.IsEnabled)
+        {
+            newProfileDto = newProfileDto with
+            {
+                Text = _crypto.DecryptText(newProfileDto.Text)
+            };
+        }
+
         var newProfile = Profile.Create(newProfileDto);
         RemoteProfileChangedImpl?.Invoke(this, new ProfileChangedEventArgs
         {
@@ -144,6 +154,14 @@ public sealed class OfficialEventDrivenServer : IRemoteClipboardServer, IOfficia
             var profileDto = await _serverAdapter.GetCurrentProfileAsync(cancellationToken);
             if (profileDto is not null)
             {
+                if (profileDto.Encrypted && _crypto is not null && _crypto.IsEnabled)
+                {
+                    profileDto = profileDto with
+                    {
+                        Text = _crypto.DecryptText(profileDto.Text)
+                    };
+                }
+
                 return Profile.Create(profileDto);
             }
         }
@@ -173,6 +191,16 @@ public sealed class OfficialEventDrivenServer : IRemoteClipboardServer, IOfficia
     {
         await _historyTransferQueue.Upload(profile, progress, cancellationToken);
         var dto = await profile.ToProfileDto(cancellationToken);
+
+        if (_crypto is not null && _crypto.IsEnabled)
+        {
+            dto = dto with
+            {
+                Text = _crypto.EncryptText(dto.Text) ?? string.Empty,
+                Encrypted = true
+            };
+        }
+
         await _serverAdapter.SetCurrentProfile(dto, cancellationToken);
     }
 

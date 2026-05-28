@@ -17,6 +17,7 @@ public class HistoryTransferQueue : IDisposable
     private readonly HistoryManager _historyManager;
     private readonly IProfileEnv _profileEnv;
     private readonly ConfigManager _configManager;
+    private readonly IClipboardCryptoService? _crypto;
 
     // 队列和任务存储
     private readonly Queue<TransferTask> _pendingTasks = new();
@@ -44,13 +45,15 @@ public class HistoryTransferQueue : IDisposable
         HistoryManager historyManager,
         IProfileEnv profileEnv,
         ConfigManager configManager,
-        [FromKeyedServices(Env.RuntimeConfigName)] ConfigBase runtimeConfig)
+        [FromKeyedServices(Env.RuntimeConfigName)] ConfigBase runtimeConfig,
+        IClipboardCryptoService? cryptoService = null)
     {
         _logger = logger;
         _remoteServerFactory = remoteServerFactory;
         _historyManager = historyManager;
         _profileEnv = profileEnv;
         _configManager = configManager;
+        _crypto = cryptoService;
         _remoteServerFactory.CurrentServerChanged += (_, _) => ClearQueue();
         runtimeConfig.ListenConfig<RuntimeHistoryConfig>(OnSyncHistoryChanged);
     }
@@ -550,6 +553,15 @@ public class HistoryTransferQueue : IDisposable
         }
 
         await server.DownloadHistoryDataAsync(task.ProfileId, localDataPath, task.ProgressReporter, ct);
+
+        if (_crypto is not null && profile.Encrypted)
+        {
+            var decryptedPath = Path.GetTempFileName();
+            await _crypto.DecryptFileAsync(localDataPath, decryptedPath, ct);
+            File.Delete(localDataPath);
+            File.Move(decryptedPath, localDataPath);
+        }
+
         await profile.SetTransferData(localDataPath, true, ct);
         if (_configManager.GetConfig<HistoryConfig>().EnableHistory)
         {
@@ -580,11 +592,21 @@ public class HistoryTransferQueue : IDisposable
         // 服务器不存在，执行上传
         string? transferFilePath = await profile.PrepareTransferData(_profileEnv.GetPersistentDir(), ct);
 
+        var uploadPath = transferFilePath;
+        var tempEncryptedPath = (string?)null;
+
+        if (transferFilePath is not null && _crypto is not null && _crypto.IsEnabled)
+        {
+            tempEncryptedPath = Path.GetTempFileName();
+            await _crypto.EncryptFileAsync(transferFilePath, tempEncryptedPath, ct);
+            uploadPath = tempEncryptedPath;
+        }
+
         var recordDto = record.ToHistoryRecordDto();
 
         try
         {
-            await server.UploadHistoryAsync(recordDto, transferFilePath, task.ProgressReporter, ct);
+            await server.UploadHistoryAsync(recordDto, uploadPath, task.ProgressReporter, ct);
             record.SyncStatus = HistorySyncStatus.Synced;
         }
         catch (RemoteHistoryConflictException ex)
@@ -595,6 +617,13 @@ public class HistoryTransferQueue : IDisposable
             }
             record.ApplyFromServerUpdateDto(ex.ServerRecord);
             await _historyManager.PersistServerSyncedAsync(record, ct);
+        }
+        finally
+        {
+            if (tempEncryptedPath is not null && File.Exists(tempEncryptedPath))
+            {
+                File.Delete(tempEncryptedPath);
+            }
         }
     }
 

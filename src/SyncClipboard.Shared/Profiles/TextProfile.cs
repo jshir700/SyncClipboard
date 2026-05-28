@@ -56,6 +56,7 @@ public class TextProfile : Profile
         _hasTransferData = dto.HasData;
         _transferDataName = dto.DataName;
         Size = dto.Size;
+        Encrypted = dto.Encrypted;
     }
 
     public string GetShortDisplayText()

@@ -96,5 +96,9 @@ namespace SyncClipboard.Core.AbstractClasses
 
             _groupInfos.Add(group, new GroupInfo { Index = MenuItemsCount() });
         }
+
+        public virtual void SetDynamicSection(MenuItem[] items)
+        {
+        }
     }
 }

@@ -28,6 +28,7 @@ using SyncClipboard.Core.RemoteServer.LogInHelper;
 using SyncClipboard.Core.RemoteServer.Adapter.OfficialServer;
 using SyncClipboard.Core.RemoteServer.Adapter.S3Server;
 using SyncClipboard.Core.Clipboard;
+using SyncClipboard.Core.Utilities.Crypto;
 
 namespace SyncClipboard.Core
 {
@@ -115,6 +116,9 @@ namespace SyncClipboard.Core
             ServiceManager.StartUpAllService();
 
             InitTrayIcon();
+            RefreshRecentClipboardMenu(contextMenu, historyWindow);
+            StartClipboardMenuUpdater(contextMenu, historyWindow);
+
             Services.GetRequiredService<AppInstance>().WaitForOtherInstanceToActiveAsync();
             contextMenu.AddMenuItemGroup([new(Strings.RestartApp, RestartApp), new(Strings.Exit, mainWindow.ExitApp)]);
             ShowMainWindow(configManager, mainWindow);
@@ -231,8 +235,71 @@ namespace SyncClipboard.Core
             }
         }
 
+        private void RefreshRecentClipboardMenu(IContextMenu contextMenu, IWindow historyWindow)
+        {
+            var historyManager = Services.GetService<Utilities.History.HistoryManager>();
+            if (historyManager is null) return;
+
+            Task.Run(async () =>
+            {
+                try
+                {
+                    var records = await historyManager.GetHistoryAsync(
+                        Shared.Profiles.ProfileTypeFilter.Text,
+                        sortByLastAccessed: true,
+                        token: CancellationToken.None
+                    );
+
+                    var items = new List<Interfaces.MenuItem>();
+                    foreach (var record in records.Take(10))
+                    {
+                        var text = record.Text;
+                        if (string.IsNullOrWhiteSpace(text) || text.Length < 2)
+                            continue;
+
+                        var display = text.Length > 45 ? text[..45] + "..." : text;
+
+                        items.Add(new Interfaces.MenuItem(display, () =>
+                        {
+                            Task.Run(async () =>
+                            {
+                                try
+                                {
+                                    var setter = Services.GetRequiredService<Clipboard.LocalClipboardSetter>();
+                                    await setter.Set(new Shared.Profiles.TextProfile(text), CancellationToken.None);
+                                }
+                                catch { }
+                            });
+                        }));
+                    }
+
+                    if (items.Count > 0)
+                    {
+                        items.Add(new Interfaces.MenuItem(I18n.Strings.HistoryPanel + "...", historyWindow.Focus));
+                    }
+
+                    contextMenu.SetDynamicSection(items.ToArray());
+                }
+                catch { }
+            });
+        }
+
+        private System.Timers.Timer? _menuRefreshTimer;
+
+        private void StartClipboardMenuUpdater(IContextMenu contextMenu, IWindow historyWindow)
+        {
+            _menuRefreshTimer = new System.Timers.Timer(TimeSpan.FromSeconds(5).TotalMilliseconds);
+            _menuRefreshTimer.Elapsed += (_, _) => RefreshRecentClipboardMenu(contextMenu, historyWindow);
+            _menuRefreshTimer.AutoReset = true;
+            _menuRefreshTimer.Start();
+        }
+
         public void Stop()
         {
+            _menuRefreshTimer?.Stop();
+            _menuRefreshTimer?.Dispose();
+            _menuRefreshTimer = null;
+
             NotificationManager.RomoveAllNotifications();
             ServiceManager?.StopAllService();
             var disposable = Services as IDisposable;
@@ -289,6 +356,7 @@ namespace SyncClipboard.Core
             services.AddSingleton<LocalClipboardSetter>();
             services.AddSingleton<ProfileActionBuilder>();
             services.AddSingleton<IProfileEnv, ClientProfileEnvProvider>();
+            services.AddSingleton<IClipboardCryptoService, ClipboardCryptoService>();
         }
 
         public static void ConfigurateViewModels(IServiceCollection services)

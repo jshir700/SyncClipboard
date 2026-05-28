@@ -71,6 +71,7 @@ public class GroupProfile : Profile
         _transferDataName = dto.DataName;
         Hash = string.IsNullOrEmpty(dto.Hash) ? null : dto.Hash;
         Size = dto.Size;
+        Encrypted = dto.Encrypted;
     }
 
     protected override async Task ComputeHash(CancellationToken token)

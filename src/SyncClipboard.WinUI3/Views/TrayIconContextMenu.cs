@@ -128,5 +128,63 @@ namespace SyncClipboard.WinUI3.Views
         {
             return _menuFlyout.Items.Count - 1;
         }
+
+        private MenuFlyoutSeparator? _dynamicSeparator;
+        private int _dynamicItemStart = 1;
+
+        public override void SetDynamicSection(Core.Interfaces.MenuItem[] items)
+        {
+            // Remove old dynamic section (items + separator) after position 0 (reserve index)
+            MenuFlyoutSeparator? oldSeparator = null;
+            for (int i = _dynamicItemStart; i < _menuFlyout.Items.Count; i++)
+            {
+                if ((MenuFlyoutSeparator)_menuFlyout.Items[i] is not null && i > _dynamicItemStart)
+                {
+                    oldSeparator = _menuFlyout.Items[i] as MenuFlyoutSeparator;
+                    break;
+                }
+            }
+
+            var removeEnd = oldSeparator is not null
+                ? _menuFlyout.Items.IndexOf(oldSeparator) + 1
+                : _menuFlyout.Items.Count;
+
+            for (int i = removeEnd - 1; i >= _dynamicItemStart; i--)
+            {
+                _menuFlyout.Items.RemoveAt(i);
+            }
+
+            if (items.Length == 0)
+            {
+                _dynamicSeparator = null;
+                return;
+            }
+
+            // Insert new items after the reserve index
+            for (int i = 0; i < items.Length; i++)
+            {
+                var flyoutItem = new MenuFlyoutItem
+                {
+                    Text = items[i].Text ?? "",
+                    Height = 32,
+                    Padding = new Microsoft.UI.Xaml.Thickness(11, 0, 11, 0)
+                };
+                if (items[i].Action is not null)
+                {
+                    flyoutItem.Command = new RelayCommand(items[i].Action);
+                }
+                flyoutItem.Tapped += (_, _) =>
+                {
+                    _pInfoIsContextMenuVisible.SetValue(_trayIcon, false);
+                    _menuFlyout.Hide();
+                    _ = WindowUtilities.HideWindow(_handle);
+                };
+                _menuFlyout.Items.Insert(_dynamicItemStart + i, flyoutItem);
+            }
+
+            // Add separator
+            _dynamicSeparator = CreateSeparator();
+            _menuFlyout.Items.Insert(_dynamicItemStart + items.Length, _dynamicSeparator);
+        }
     }
 }

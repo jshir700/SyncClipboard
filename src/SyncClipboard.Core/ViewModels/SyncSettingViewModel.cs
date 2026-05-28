@@ -224,6 +224,71 @@ public partial class SyncSettingViewModel : ObservableObject
 
     #endregion
 
+    #region encryption
+
+    [ObservableProperty]
+    private bool encryptionEnabled;
+    partial void OnEncryptionEnabledChanged(bool value)
+    {
+        if (!value)
+        {
+            _cryptoService.DisableEncryption();
+            IsPasswordSet = false;
+        }
+        OnPropertyChanged(nameof(NeedsEncryptionPassword));
+    }
+
+    [ObservableProperty]
+    private bool isPasswordSet;
+
+    [ObservableProperty]
+    private bool showEncryptionPassword;
+
+    [ObservableProperty]
+    private string encryptionPasswordInput = string.Empty;
+
+    public bool NeedsEncryptionPassword => EncryptionEnabled && !IsPasswordSet;
+
+    partial void OnIsPasswordSetChanged(bool value) => OnPropertyChanged(nameof(NeedsEncryptionPassword));
+
+    [RelayCommand]
+    private void SetEncryptionPassword()
+    {
+        if (string.IsNullOrWhiteSpace(EncryptionPasswordInput))
+            return;
+
+        try
+        {
+            _cryptoService.SetPassword(EncryptionPasswordInput);
+            IsPasswordSet = true;
+            EncryptionPasswordInput = string.Empty;
+        }
+        catch (Exception ex)
+        {
+            _dialog.ShowMessageAsync("Encryption Error", ex.Message);
+        }
+    }
+
+    [RelayCommand]
+    private void LoadEncryptionPassword()
+    {
+        if (string.IsNullOrWhiteSpace(EncryptionPasswordInput))
+            return;
+
+        try
+        {
+            _cryptoService.LoadOrDeriveKey(EncryptionPasswordInput);
+            IsPasswordSet = true;
+            EncryptionPasswordInput = string.Empty;
+        }
+        catch (Exception ex)
+        {
+            _dialog.ShowMessageAsync("Encryption Error", ex.Message);
+        }
+    }
+
+    #endregion
+
     #region clipboard source (Linux only)
 
     public bool IsLinux { get; } = OperatingSystem.IsLinux();
@@ -258,22 +323,31 @@ public partial class SyncSettingViewModel : ObservableObject
         AvaloniaEnabled = !config.ProhibitSources.Contains("Avalonia");
     }
 
+    private void LoadCryptoConfig(CryptoConfig config)
+    {
+        EncryptionEnabled = config.EncryptionEnabled;
+        IsPasswordSet = config.EncryptionEnabled && !string.IsNullOrEmpty(config.EncryptedPassword);
+    }
+
     #endregion
 
     private readonly ConfigManager _configManager;
     private readonly MainViewModel _mainVM;
     private readonly AccountManager _accountManager;
     private readonly IMainWindowDialog _dialog;
+    private readonly IClipboardCryptoService _cryptoService;
 
-    public SyncSettingViewModel(ConfigManager configManager, MainViewModel mainViewModel, AccountManager accountManager, IMainWindowDialog dialog)
+    public SyncSettingViewModel(ConfigManager configManager, MainViewModel mainViewModel, AccountManager accountManager, IMainWindowDialog dialog, IClipboardCryptoService cryptoService)
     {
         _configManager = configManager;
         _mainVM = mainViewModel;
         _accountManager = accountManager;
         _dialog = dialog;
+        _cryptoService = cryptoService;
 
         _configManager.ListenConfig<SyncConfig>(config => ClientConfig = config);
         _configManager.ListenConfig<ClipboardFactoryConfig>(LoadClipboardFactoryConfig);
+        _configManager.ListenConfig<CryptoConfig>(LoadCryptoConfig);
         _accountManager.SavedAccountsChanged += OnSavedAccountsChanged;
 
         clientConfig = _configManager.GetConfig<SyncConfig>();
@@ -294,6 +368,7 @@ public partial class SyncSettingViewModel : ObservableObject
         multiFileEnable = clientConfig.EnableUploadMultiFile;
 
         LoadClipboardFactoryConfig(_configManager.GetConfig<ClipboardFactoryConfig>());
+        LoadCryptoConfig(_configManager.GetConfig<CryptoConfig>());
 
         LoadSavedAccounts();
     }

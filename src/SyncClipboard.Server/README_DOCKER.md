@@ -1,4 +1,4 @@
-# [SyncClipboard](https://github.com/Jeric-X/SyncClipboard) 独立服务端 | Dedicated server
+# [SyncClipboard](https://github.com/jshir700/SyncClipboard) 独立服务端 | Dedicated server
 
 ## 使用方法 | Usage
 
@@ -11,7 +11,7 @@ docker run -d \
   --name=syncclipboard-server \
   -p 5033:5033 \
   --restart unless-stopped \
-  jericx/syncclipboard-server:latest
+  jshir700/syncclipboard-server:latest
 ```
 
 ## 服务端配置 | Server Conf
@@ -53,7 +53,7 @@ docker run -d \
   -p 5033:5033 \
   -v /path/to/appsettings.json:/app/appsettings.json \
   --restart unless-stopped \
-  jericx/syncclipboard-server:latest
+  jshir700/syncclipboard-server:latest
 ```
 
 ## 参数 | Parameter

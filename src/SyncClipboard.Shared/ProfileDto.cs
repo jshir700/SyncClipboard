@@ -12,4 +12,5 @@ public record class ProfileDto
     public bool HasData { get; set; } = false;
     public string? DataName { get; set; }
     public long Size { get; set; } = 0;
+    public bool Encrypted { get; set; } = false;
 }

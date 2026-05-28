@@ -17,6 +17,7 @@ internal class StorageBasedServerHelper(IServiceProvider sp, IStorageBasedServer
     private readonly ILogger _logger = sp.GetRequiredService<ILogger>();
     private readonly ITrayIcon _trayIcon = sp.GetRequiredService<ITrayIcon>();
     private readonly IProfileEnv _profileEnv = sp.GetRequiredService<IProfileEnv>();
+    private readonly IClipboardCryptoService? _crypto = sp.GetService<IClipboardCryptoService>();
 
     public event Action? ExceptionOccurred;
 
@@ -45,6 +46,15 @@ internal class StorageBasedServerHelper(IServiceProvider sp, IStorageBasedServer
         {
             var fileName = Path.GetFileName(dataPath);
             await _serverAdapter.DownloadFileAsync(fileName, dataPath, progress, cancellationToken);
+
+            if (_crypto is not null && profile.Encrypted)
+            {
+                var decryptedPath = Path.GetTempFileName();
+                await _crypto.DecryptFileAsync(dataPath, decryptedPath, cancellationToken);
+                File.Delete(dataPath);
+                File.Move(decryptedPath, dataPath);
+            }
+
             await profile.SetAndMoveTransferData(persistentDir, dataPath, cancellationToken);
             _logger.Write($"[PULL] Downloaded {fileName} to {dataPath}");
             _trayIcon.SetStatusString(ServerConstants.StatusName, "Running.");
@@ -91,6 +101,14 @@ internal class StorageBasedServerHelper(IServiceProvider sp, IStorageBasedServer
                 return await UploadAndReturnBlankProfile(cancellationToken);
             }
 
+            if (profileDto.Encrypted && _crypto is not null && _crypto.IsEnabled)
+            {
+                profileDto = profileDto with
+                {
+                    Text = _crypto.DecryptText(profileDto.Text)
+                };
+            }
+
             _trayIcon.SetStatusString(ServerConstants.StatusName, "Running.");
             return Profile.Create(profileDto);
         }
@@ -130,6 +148,16 @@ internal class StorageBasedServerHelper(IServiceProvider sp, IStorageBasedServer
             await _serverAdapter.CleanupTempFilesAsync(cancellationToken);
             await UploadProfileDataAsync(profile, progress, cancellationToken);
             var profileDto = await profile.ToProfileDto(cancellationToken);
+
+            if (_crypto is not null && _crypto.IsEnabled)
+            {
+                profileDto = profileDto with
+                {
+                    Text = _crypto.EncryptText(profileDto.Text) ?? string.Empty,
+                    Encrypted = true
+                };
+            }
+
             await _serverAdapter.SetProfileAsync(profileDto, cancellationToken);
 
             _logger.Write($"[PUSH] Profile metadata updated: {JsonSerializer.Serialize(profileDto)}");
@@ -156,9 +184,29 @@ internal class StorageBasedServerHelper(IServiceProvider sp, IStorageBasedServer
                 throw new FileNotFoundException($"Local data file not found: {localDataPath}");
             }
 
-            var fileName = Path.GetFileName(localDataPath);
-            await _serverAdapter.UploadFileAsync(fileName, localDataPath, progress, cancellationToken);
-            _logger.Write($"[PUSH] Upload completed for {fileName}");
+            var uploadPath = localDataPath;
+            var tempEncryptedPath = (string?)null;
+
+            if (_crypto is not null && _crypto.IsEnabled)
+            {
+                tempEncryptedPath = Path.GetTempFileName();
+                await _crypto.EncryptFileAsync(localDataPath, tempEncryptedPath, cancellationToken);
+                uploadPath = tempEncryptedPath;
+            }
+
+            try
+            {
+                var fileName = Path.GetFileName(localDataPath);
+                await _serverAdapter.UploadFileAsync(fileName, uploadPath, progress, cancellationToken);
+                _logger.Write($"[PUSH] Upload completed for {fileName}");
+            }
+            finally
+            {
+                if (tempEncryptedPath is not null && File.Exists(tempEncryptedPath))
+                {
+                    File.Delete(tempEncryptedPath);
+                }
+            }
         }
         catch (Exception ex) when (!cancellationToken.IsCancellationRequested)
         {

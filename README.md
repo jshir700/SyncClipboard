@@ -1,5 +1,5 @@
 # SyncClipboard
-[![build](https://github.com/Jeric-X/SyncClipboard/actions/workflows/build-entry.yml/badge.svg?branch=master)](https://github.com/Jeric-X/SyncClipboard/actions?query=branch%3Amaster)
+[![build](https://github.com/jshir700/SyncClipboard/actions/workflows/build-entry.yml/badge.svg?branch=master)](https://github.com/jshir700/SyncClipboard/actions?query=branch%3Amaster)
 
 中文 | [English](docs/README_EN.md)  
 
@@ -69,13 +69,13 @@
 >
 
 ## 不兼容变更记录
-### [v3.1.1](https://github.com/Jeric-X/SyncClipboard/issues/286)
+### [v3.1.1](https://github.com/jshir700/SyncClipboard/issues/286)
 v3.1.1及以上的客户端、服务器与之前的版本不兼容，同步网络中的客户端、服务器、第三方客户端需同步升级
 
 
 ## 服务器
 ### 独立服务器
-[SyncClipboard.Server](https://github.com/Jeric-X/SyncClipboard/releases/)支持跨平台运行，依赖[ASP.NET Core 8.0](https://dotnet.microsoft.com/zh-cn/download/dotnet/8.0)，安装`ASP.NET Core 运行时`后，通过以下命令运行
+[SyncClipboard.Server](https://github.com/jshir700/SyncClipboard/releases/)支持跨平台运行，依赖[ASP.NET Core 8.0](https://dotnet.microsoft.com/zh-cn/download/dotnet/8.0)，安装`ASP.NET Core 运行时`后，通过以下命令运行
 ```
 dotnet /path/to/SyncClipboard.Server.dll --contentRoot ./
 ```
@@ -136,10 +136,10 @@ docker run -d \
   -e SYNCCLIPBOARD_PASSWORD=your_password \
   -v /data/syncclipboard-server:/app/data \
   --restart unless-stopped \
-  jericx/syncclipboard-server:latest
+  jshir700/syncclipboard-server:latest
 
 # docker compose
-curl -sL https://github.com/Jeric-X/SyncClipboard/raw/master/src/SyncClipboard.Server/docker-compose.yml >> docker-compose.yml
+curl -sL https://github.com/jshir700/SyncClipboard/raw/master/src/SyncClipboard.Server/docker-compose.yml >> docker-compose.yml
 docker compose up -d
 ```
 
@@ -197,7 +197,7 @@ sudo systemctl enable --now syncclipboard.service
 ### Windows
 #### 免安装板
 
-在[Release](https://github.com/Jeric-X/SyncClipboard/releases/latest)页面下载名字以`SyncClipboard_win_`开头的zip文件，解压后运行`SyncClipboard.exe`
+在[Release](https://github.com/jshir700/SyncClipboard/releases/latest)页面下载名字以`SyncClipboard_win_`开头的zip文件，解压后运行`SyncClipboard.exe`
 
 #### 故障排除
 - 支持的最低系统版本为Windows10 2004
@@ -205,7 +205,7 @@ sudo systemctl enable --now syncclipboard.service
 
 ### macOS
 #### 手动安装
-在[Release](https://github.com/Jeric-X/SyncClipboard/releases/latest)页面下载名字以`SyncClipboard_macos_`开头的安装包，双击后拖动SyncClipboard图标到Applications文件夹
+在[Release](https://github.com/jshir700/SyncClipboard/releases/latest)页面下载名字以`SyncClipboard_macos_`开头的安装包，双击后拖动SyncClipboard图标到Applications文件夹
 
 #### 故障排除
 - 系统提示`由于开发者无法验证，“SyncClipboard”无法打开`： 
@@ -215,7 +215,7 @@ sudo systemctl enable --now syncclipboard.service
 
 ### Linux
 #### 手动安装
-在[Release](https://github.com/Jeric-X/SyncClipboard/releases/latest)页面下载名字以`SyncClipboard_linux_`开头的安装包
+在[Release](https://github.com/jshir700/SyncClipboard/releases/latest)页面下载名字以`SyncClipboard_linux_`开头的安装包
 
 #### Arch Linux
 
@@ -255,10 +255,10 @@ paru -Sy syncclipboard-desktop
 
 - 手动同步，导入这个[快捷指令](https://www.icloud.com/shortcuts/34404963b512432cb5672c8a95001b19)，手动触发上传或下载
 - 自动同步，导入这个[快捷指令](https://www.icloud.com/shortcuts/05e7ac5aca5f4f588b776117cf740587)，运行后设备会自动在后台同步剪贴板内容，此快捷指令将执行无限时长，需要手动关闭，你还可以手动修改同步后是否发送系统通知、查询的间隔秒数
-- 自动上传短信验证码，参考这个帖子中的视频教程 https://github.com/Jeric-X/SyncClipboard/discussions/60
+- 自动上传短信验证码，参考这个帖子中的视频教程 https://github.com/jshir700/SyncClipboard/discussions/60
 
 ### Android
-#### 使用[SyncClipboard Mobile](https://github.com/Jeric-X/syncclipboard-mobile)
+#### 使用[SyncClipboard Mobile](https://github.com/jshir700/syncclipboard-mobile)
 
 - 从通知中心、桌面快捷方式、分享菜单中快捷手动触发
 - 一定程度的后台同步能力
@@ -272,7 +272,7 @@ paru -Sy syncclipboard-desktop
 功能详情、使用步骤、系统要求等信息请查看该项目的 [README](https://github.com/bling-yshs/sync-clipboard-flutter)
 
 #### 使用[HTTP Request Shortcuts](https://github.com/Waboodoo/HTTP-Shortcuts)
-导入这个[配置文件](https://github.com/Jeric-X/SyncClipboard/raw/refs/heads/dev/script/shortcuts.zip)，修改`变量`中的`UserName`，`UserToken`，`url`， `url`不要以斜线分隔符`/`结尾。`HTTP Request Shortcuts`支持从下拉菜单、桌面组件、桌面图标、分享菜单中使用
+导入这个[配置文件](https://github.com/jshir700/SyncClipboard/raw/refs/heads/dev/script/shortcuts.zip)，修改`变量`中的`UserName`，`UserToken`，`url`， `url`不要以斜线分隔符`/`结尾。`HTTP Request Shortcuts`支持从下拉菜单、桌面组件、桌面图标、分享菜单中使用
 
 <details>
 <summary>导入配置文件后修改配置图示</summary>
@@ -305,7 +305,7 @@ paru -Sy syncclipboard-desktop
 
 #### 使用[SmsForwarder](https://github.com/pppscn/SmsForwarder)
 
-- 自动上传验证码， https://github.com/Jeric-X/SyncClipboard/discussions/109
+- 自动上传验证码， https://github.com/jshir700/SyncClipboard/discussions/109
 
 #### 使用[Tasker](https://tasker.joaoapps.com/)
 
@@ -380,7 +380,7 @@ PUT /SyncClipboard.json
 使用 S3 兼容对象存储作为同步后端时的协议与数据格式规范请参阅 [S3 Adapter Design](docs/S3-Adapter-Design.md)。
 
 ## 项目依赖
-[NativeNotification](https://github.com/Jeric-X/NativeNotification)  
+[NativeNotification](https://github.com/jshir700/NativeNotification)  
 [Magick.NET](https://github.com/dlemstra/Magick.NET)  
 [.NET Community Toolkit](https://github.com/CommunityToolkit/dotnet)  
 [H.NotifyIcon](https://github.com/HavenDV/H.NotifyIcon)  

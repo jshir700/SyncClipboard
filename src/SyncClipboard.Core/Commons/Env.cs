@@ -6,16 +6,16 @@ namespace SyncClipboard.Core.Commons
     public static class Env
     {
         public const string SoftName = "SyncClipboard";
-        public const string HomePage = "https://github.com/Jeric-X/SyncClipboard";
+        public const string HomePage = "https://github.com/jshir700/SyncClipboard";
         public const string AppVersion = SyncClipboardProperty.AppVersion;
 
         public const string RequestServerVersion = "3.1.1";
-        public const string UpdateApiUrl = "https://api.github.com/repos/Jeric-X/SyncClipboard/releases";
-        public const string UpdateUrl = "https://github.com/Jeric-X/SyncClipboard/releases";
+        public const string UpdateApiUrl = "https://api.github.com/repos/jshir700/SyncClipboard/releases";
+        public const string UpdateUrl = "https://github.com/jshir700/SyncClipboard/releases";
 
         public const string RuntimeConfigName = "RuntimeConfig.json";
         public const string UpdateInfoFile = "update_info.json";
-        public const string LinuxPackageAppId = "xyz.jericx.desktop.syncclipboard";
+        public const string LinuxPackageAppId = "com.jshir700.desktop.syncclipboard";
         public static readonly string LinuxUserDesktopEntryFolder = UserPath(".local/share/applications");
         public static readonly string ProgramDirectory = AppDomain.CurrentDomain.BaseDirectory;
         /// <summary>

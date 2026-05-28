@@ -1,6 +1,6 @@
 services:
   syncclipboard-server:
-    image: jericx/syncclipboard-server:latest
+    image: jshir700/syncclipboard-server:latest
     container_name: syncclipboard-server
     restart: unless-stopped
     ports:

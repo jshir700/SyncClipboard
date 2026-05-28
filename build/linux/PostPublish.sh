@@ -24,7 +24,7 @@ echo build_bin_dir full path : $bin_source_dir
 
 cp -r ./build_bin/* ${BUILD_APP_BIN}/
 
-cat > "${BUILD_APP_BIN}/xyz.jericx.desktop.syncclipboard.desktop" <<EOF
+cat > "${BUILD_APP_BIN}/com.jshir700.desktop.syncclipboard.desktop" <<EOF
 [Desktop Entry]
 Type=Application
 Name=${APP_FRIENDLY_NAME}

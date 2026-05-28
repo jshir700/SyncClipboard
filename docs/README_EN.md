@@ -63,12 +63,12 @@
 >
 
 ## Breaking Changes
-### [v3.1.1](https://github.com/Jeric-X/SyncClipboard/issues/286)
+### [v3.1.1](https://github.com/jshir700/SyncClipboard/issues/286)
 Clients and servers v3.1.1 and above are incompatible with previous versions. All clients, servers, and third-party clients in the sync network need to be upgraded together.
 
 ## Server
 ### Standalone Server
-[SyncClipboard.Server](https://github.com/Jeric-X/SyncClipboard/releases/) is cross-platform, depends on [ASP.NET Core 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0). Run with:
+[SyncClipboard.Server](https://github.com/jshir700/SyncClipboard/releases/) is cross-platform, depends on [ASP.NET Core 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0). Run with:
 ```
 dotnet /path/to/SyncClipboard.Server.dll --contentRoot ./
 ```
@@ -131,10 +131,10 @@ docker run -d \
   -e SYNCCLIPBOARD_PASSWORD=your_password \
   -v /data/syncclipboard-server:/app/data \
   --restart unless-stopped \
-  jericx/syncclipboard-server:latest
+  jshir700/syncclipboard-server:latest
 
 # docker compose
-curl -sL https://github.com/Jeric-X/SyncClipboard/raw/master/src/SyncClipboard.Server/docker-compose.yml >> docker-compose.yml
+curl -sL https://github.com/jshir700/SyncClipboard/raw/master/src/SyncClipboard.Server/docker-compose.yml >> docker-compose.yml
 docker compose up -d
 ```
 
@@ -191,7 +191,7 @@ Clipboard is auto-synced between desktop clients running on Windows/Linux/macOS.
 ### Windows
 #### Portable Version
 
-Download the zip file starting with `SyncClipboard_win_` from the [Release](https://github.com/Jeric-X/SyncClipboard/releases/latest) page. Extract it and run `SyncClipboard.exe`.
+Download the zip file starting with `SyncClipboard_win_` from the [Release](https://github.com/jshir700/SyncClipboard/releases/latest) page. Extract it and run `SyncClipboard.exe`.
 
 #### Troubleshooting
 - The minimum supported OS version is Windows 10 2004.
@@ -199,7 +199,7 @@ Download the zip file starting with `SyncClipboard_win_` from the [Release](http
 
 ### macOS
 #### Manual Installation
-Download the installation package starting with `SyncClipboard_macos_` from the [Release](https://github.com/Jeric-X/SyncClipboard/releases/latest) page. Double-click it and drag the SyncClipboard icon to the Applications folder.
+Download the installation package starting with `SyncClipboard_macos_` from the [Release](https://github.com/jshir700/SyncClipboard/releases/latest) page. Double-click it and drag the SyncClipboard icon to the Applications folder.
 
 #### Troubleshooting
 - System prompts `“SyncClipboard” cannot be opened because the developer cannot be verified`: Go to `Settings` -> `Privacy & Security` on macOS, and click `Open Anyway`.
@@ -208,7 +208,7 @@ Download the installation package starting with `SyncClipboard_macos_` from the 
 
 ### Linux
 #### Manual Installation
-Download the installation package starting with `SyncClipboard_linux_` from the [Release](https://github.com/Jeric-X/SyncClipboard/releases/latest) page.
+Download the installation package starting with `SyncClipboard_linux_` from the [Release](https://github.com/jshir700/SyncClipboard/releases/latest) page.
 
 #### Arch Linux
 
@@ -252,7 +252,7 @@ Multiple `--command-{command-name}` arguments are supported, multiple commands a
 
 ### Android
 #### Use [HTTP Request Shortcuts](https://github.com/Waboodoo/HTTP-Shortcuts)
-Import this [file](https://github.com/Jeric-X/SyncClipboard/raw/refs/heads/dev/script/en/shortcuts.zip), Change the `UserName`, `UserToken`, `url` in `Variables` to yours. Make sure no slash(/) at the end of url. `HTTP Request Shortcuts` supports using shortcuts from drop-down menu, home screen widgets, home screen icons and share sheet.
+Import this [file](https://github.com/jshir700/SyncClipboard/raw/refs/heads/dev/script/en/shortcuts.zip), Change the `UserName`, `UserToken`, `url` in `Variables` to yours. Make sure no slash(/) at the end of url. `HTTP Request Shortcuts` supports using shortcuts from drop-down menu, home screen widgets, home screen icons and share sheet.
 
 <details>
 <summary>Screenshots</summary>
@@ -339,7 +339,7 @@ PUT /SyncClipboard.json
 - `size` indicates the total byte size of the copied file, or the length of the complete string for Text type clipboard
 
 ## Open Source Dependencies
-[NativeNotification](https://github.com/Jeric-X/NativeNotification) 
+[NativeNotification](https://github.com/jshir700/NativeNotification) 
 [Magick.NET](https://github.com/dlemstra/Magick.NET)  
 [.NET Community Toolkit](https://github.com/CommunityToolkit/dotnet)  
 [H.NotifyIcon](https://github.com/HavenDV/H.NotifyIcon)  

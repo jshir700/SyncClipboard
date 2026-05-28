@@ -5,6 +5,7 @@ public static class ConfigKey
     public const string ClipboardAssist = "ClipboardAssist";
     public const string Sync = "SyncService";
     public const string Server = "ServerService";
+    public const string Crypto = "CryptoService";
     public const string Program = "Program";
 
     public static string GetKeyFromType<T>()
