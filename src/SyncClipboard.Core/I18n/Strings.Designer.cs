@@ -2644,5 +2644,47 @@ namespace SyncClipboard.Core.I18n {
                 return ResourceManager.GetString("WindowTopmost", resourceCulture);
             }
         }
+
+        public static string EndToEndEncryption {
+            get {
+                return ResourceManager.GetString("EndToEndEncryption", resourceCulture);
+            }
+        }
+
+        public static string EncryptionPassword {
+            get {
+                return ResourceManager.GetString("EncryptionPassword", resourceCulture);
+            }
+        }
+
+        public static string EncryptionPasswordDescription {
+            get {
+                return ResourceManager.GetString("EncryptionPasswordDescription", resourceCulture);
+            }
+        }
+
+        public static string EncryptionPasswordPlaceholder {
+            get {
+                return ResourceManager.GetString("EncryptionPasswordPlaceholder", resourceCulture);
+            }
+        }
+
+        public static string EncryptionSetPassword {
+            get {
+                return ResourceManager.GetString("EncryptionSetPassword", resourceCulture);
+            }
+        }
+
+        public static string EncryptionUnlock {
+            get {
+                return ResourceManager.GetString("EncryptionUnlock", resourceCulture);
+            }
+        }
+
+        public static string EncryptionUnlocked {
+            get {
+                return ResourceManager.GetString("EncryptionUnlocked", resourceCulture);
+            }
+        }
     }
 }

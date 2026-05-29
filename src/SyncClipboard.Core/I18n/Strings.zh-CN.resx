@@ -984,4 +984,25 @@ Esc：关闭面板</value>
   <data name="AcquireImage" xml:space="preserve">
     <value>获取图片</value>
   </data>
+  <data name="EndToEndEncryption" xml:space="preserve">
+    <value>端到端加密</value>
+  </data>
+  <data name="EncryptionPassword" xml:space="preserve">
+    <value>加密密码</value>
+  </data>
+  <data name="EncryptionPasswordDescription" xml:space="preserve">
+    <value>在所有设备上设置相同密码来启用端到端加密。</value>
+  </data>
+  <data name="EncryptionPasswordPlaceholder" xml:space="preserve">
+    <value>请输入加密密码</value>
+  </data>
+  <data name="EncryptionSetPassword" xml:space="preserve">
+    <value>设置</value>
+  </data>
+  <data name="EncryptionUnlock" xml:space="preserve">
+    <value>解锁</value>
+  </data>
+  <data name="EncryptionUnlocked" xml:space="preserve">
+    <value>✓ 已解锁</value>
+  </data>
 </root>

@@ -986,4 +986,25 @@ This operation cannot be undone.</value>
   <data name="AcquireImage" xml:space="preserve">
     <value>Acquire Image</value>
   </data>
+  <data name="EndToEndEncryption" xml:space="preserve">
+    <value>End-to-End Encryption</value>
+  </data>
+  <data name="EncryptionPassword" xml:space="preserve">
+    <value>Encryption Password</value>
+  </data>
+  <data name="EncryptionPasswordDescription" xml:space="preserve">
+    <value>Set the same password on all your devices to enable end-to-end encryption.</value>
+  </data>
+  <data name="EncryptionPasswordPlaceholder" xml:space="preserve">
+    <value>Enter encryption password</value>
+  </data>
+  <data name="EncryptionSetPassword" xml:space="preserve">
+    <value>Set</value>
+  </data>
+  <data name="EncryptionUnlock" xml:space="preserve">
+    <value>Unlock</value>
+  </data>
+  <data name="EncryptionUnlocked" xml:space="preserve">
+    <value>✓ Unlocked</value>
+  </data>
 </root>

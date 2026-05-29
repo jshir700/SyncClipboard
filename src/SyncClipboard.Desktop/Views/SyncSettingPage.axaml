@@ -133,7 +133,7 @@
                                          Content="{x:Static i18n:Strings.ClipboardAcquisitionRules}" />
             </ui:SettingsExpander.Items>
         </ui:SettingsExpander>
-        <ui:SettingsExpander Header="End-to-End Encryption" IsExpanded="False">
+        <ui:SettingsExpander Header="{x:Static i18n:Strings.EndToEndEncryption}" IsExpanded="False">
             <ui:SettingsExpander.IconSource>
                 <ui:FontIconSource Glyph="&#xE72E;" FontFamily="{StaticResource SymbolThemeFontFamily}" />
             </ui:SettingsExpander.IconSource>
@@ -141,23 +141,23 @@
                 <ToggleSwitch OnContent="On" OffContent="Off" IsChecked="{Binding EncryptionEnabled, Mode=TwoWay}" />
             </ui:SettingsExpander.Footer>
             <ui:SettingsExpander.Items>
-                <ui:SettingsExpanderItem Content="Encryption Password"
-                                         Description="Set the same password on all your devices to enable end-to-end encryption."
+                <ui:SettingsExpanderItem Content="{x:Static i18n:Strings.EncryptionPassword}"
+                                         Description="{x:Static i18n:Strings.EncryptionPasswordDescription}"
                                          IsVisible="{Binding EncryptionEnabled}">
                     <ui:SettingsExpanderItem.Footer>
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <TextBox Width="200"
                                      Text="{Binding EncryptionPasswordInput, Mode=TwoWay}"
                                      PasswordChar="&#x25CF;"
-                                     Watermark="Enter password"
+                                     Watermark="{x:Static i18n:Strings.EncryptionPasswordPlaceholder}"
                                      IsEnabled="{Binding NeedsEncryptionPassword}" />
-                            <Button Content="Set"
+                            <Button Content="{x:Static i18n:Strings.EncryptionSetPassword}"
                                     Command="{Binding SetEncryptionPasswordCommand}"
                                     IsVisible="{Binding NeedsEncryptionPassword}" />
-                            <Button Content="Unlock"
+                            <Button Content="{x:Static i18n:Strings.EncryptionUnlock}"
                                     Command="{Binding LoadEncryptionPasswordCommand}"
                                     IsVisible="{Binding NeedsEncryptionPassword}" />
-                            <TextBlock Text="&#x2713; Unlocked"
+                            <TextBlock Text="{x:Static i18n:Strings.EncryptionUnlocked}"
                                        VerticalAlignment="Center"
                                        Foreground="Green"
                                        IsVisible="{Binding IsPasswordSet}" />
