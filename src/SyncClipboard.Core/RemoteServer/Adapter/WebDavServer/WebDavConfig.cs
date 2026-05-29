@@ -24,6 +24,9 @@ public record WebDavConfig : IAdapterConfig<WebDavConfig>
 
     public string CustomName { get; set; } = string.Empty;
 
+    public bool EncryptionEnabled { get; set; } = false;
+    public string EncryptedPassword { get; set; } = string.Empty;
+
     [JsonIgnore]
     public string NameSuggestion => $"{UserName} - {StringHelper.GetHostFromUrl(RemoteURL)} - {ConfigTypeName}";
 }

@@ -234,6 +234,11 @@ public partial class SyncSettingViewModel : ObservableObject
         {
             _cryptoService.DisableEncryption();
             IsPasswordSet = false;
+            SaveEncryptionToAccount(false, null);
+        }
+        else if (IsPasswordSet)
+        {
+            SaveEncryptionToAccount(true, null);
         }
         OnPropertyChanged(nameof(NeedsEncryptionPassword));
     }
@@ -259,9 +264,10 @@ public partial class SyncSettingViewModel : ObservableObject
 
         try
         {
-            _cryptoService.SetPassword(EncryptionPasswordInput);
+            var hash = _cryptoService.SetPassword(EncryptionPasswordInput);
             IsPasswordSet = true;
             EncryptionPasswordInput = string.Empty;
+            SaveEncryptionToAccount(true, hash);
         }
         catch (Exception ex)
         {
@@ -285,6 +291,23 @@ public partial class SyncSettingViewModel : ObservableObject
         {
             _dialog.ShowMessageAsync("Encryption Error", ex.Message);
         }
+    }
+
+    private void SaveEncryptionToAccount(bool enabled, string? passwordHash)
+    {
+        var account = _configManager.GetConfig<AccountConfig>();
+        if (string.IsNullOrEmpty(account.AccountType) || string.IsNullOrEmpty(account.AccountId))
+            return;
+
+        var config = _accountManager.GetConfig(account.AccountType, account.AccountId);
+        if (config is null) return;
+
+        var t = config.GetType();
+        t.GetProperty("EncryptionEnabled")?.SetValue(config, enabled);
+        if (passwordHash is not null)
+            t.GetProperty("EncryptedPassword")?.SetValue(config, passwordHash);
+
+        _accountManager.SetConfig(account.AccountId, account.AccountType, config);
     }
 
     #endregion
@@ -323,10 +346,23 @@ public partial class SyncSettingViewModel : ObservableObject
         AvaloniaEnabled = !config.ProhibitSources.Contains("Avalonia");
     }
 
-    private void LoadCryptoConfig(CryptoConfig config)
+    private void LoadEncryptionFromAccount(object? configDetail)
     {
-        EncryptionEnabled = config.EncryptionEnabled;
-        IsPasswordSet = config.EncryptionEnabled && !string.IsNullOrEmpty(config.EncryptedPassword);
+        if (configDetail is null)
+        {
+            EncryptionEnabled = false;
+            IsPasswordSet = false;
+            return;
+        }
+
+        var t = configDetail.GetType();
+        var ep = t.GetProperty("EncryptionEnabled");
+        var hp = t.GetProperty("EncryptedPassword");
+        var enabled = (bool)(ep?.GetValue(configDetail) ?? false);
+        var hash = (string?)(hp?.GetValue(configDetail) ?? null);
+
+        EncryptionEnabled = enabled;
+        IsPasswordSet = enabled && !string.IsNullOrEmpty(hash);
     }
 
     #endregion
@@ -347,7 +383,7 @@ public partial class SyncSettingViewModel : ObservableObject
 
         _configManager.ListenConfig<SyncConfig>(config => ClientConfig = config);
         _configManager.ListenConfig<ClipboardFactoryConfig>(LoadClipboardFactoryConfig);
-        _configManager.ListenConfig<CryptoConfig>(LoadCryptoConfig);
+        _accountManager.CurrentAccountChanged += (_, detail) => LoadEncryptionFromAccount(detail);
         _accountManager.SavedAccountsChanged += OnSavedAccountsChanged;
 
         clientConfig = _configManager.GetConfig<SyncConfig>();
@@ -368,7 +404,11 @@ public partial class SyncSettingViewModel : ObservableObject
         multiFileEnable = clientConfig.EnableUploadMultiFile;
 
         LoadClipboardFactoryConfig(_configManager.GetConfig<ClipboardFactoryConfig>());
-        LoadCryptoConfig(_configManager.GetConfig<CryptoConfig>());
+
+        // Init encryption from active account
+        var acc = _configManager.GetConfig<AccountConfig>();
+        var detail = _accountManager.GetConfig(acc.AccountType, acc.AccountId);
+        LoadEncryptionFromAccount(detail);
 
         LoadSavedAccounts();
     }

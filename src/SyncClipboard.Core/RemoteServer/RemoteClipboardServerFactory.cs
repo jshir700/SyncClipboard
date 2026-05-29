@@ -88,6 +88,15 @@ public class RemoteClipboardServerFactory
 
         _currentAdapter ??= new DefaultStorageAdapter();
         _configDetail = configDetail ?? _accountManager.GetConfig(_currentAccount.AccountType, _currentAccount.AccountId);
+
+        // Sync encryption config from the active account
+        var crypto = _serviceProvider.GetService<IClipboardCryptoService>();
+        if (crypto is not null)
+        {
+            var (enabled, hash) = GetEncryptionConfig(_configDetail);
+            crypto.UpdateConfig(enabled, hash);
+        }
+
         if (_configDetail is not null)
         {
             _currentAdapter.SetConfig(_configDetail, _syncConfig);
@@ -121,5 +130,18 @@ public class RemoteClipboardServerFactory
         var oldServer = _current;
         oldServer?.Dispose();
         _current = null;
+    }
+
+    private static (bool enabled, string hash) GetEncryptionConfig(object? configDetail)
+    {
+        if (configDetail is null) return (false, "");
+        var t = configDetail.GetType();
+        var ep = t.GetProperty("EncryptionEnabled");
+        var hp = t.GetProperty("EncryptedPassword");
+        if (ep is null || hp is null) return (false, "");
+        return (
+            (bool)(ep.GetValue(configDetail) ?? false),
+            (string)(hp.GetValue(configDetail) ?? "")
+        );
     }
 }

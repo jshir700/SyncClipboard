@@ -36,6 +36,9 @@ public record S3Config : IAdapterConfig<S3Config>
 
     public string CustomName { get; set; } = string.Empty;
 
+    public bool EncryptionEnabled { get; set; } = false;
+    public string EncryptedPassword { get; set; } = string.Empty;
+
     [JsonIgnore]
     public string NameSuggestion
     {
